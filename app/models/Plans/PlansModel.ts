@@ -13,7 +13,7 @@ export interface IPlan {
 
 export interface IPlanModel extends IPlan, Document { }
 
-export const PlanSchema = new Schema(
+const PlanSchema = new Schema(
     {
         uniqueId: { type: String, required: true, unique: true },
         title: { type: String, required: true },
@@ -28,4 +28,4 @@ export const PlanSchema = new Schema(
     }
 );
 
-export const Plan = mongoose.model<IPlanModel>("Plan", PlanSchema);
+export default mongoose.model<IPlanModel>('Plan', PlanSchema);

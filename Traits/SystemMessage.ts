@@ -13,6 +13,9 @@ export const returnMessage = (keyoptions: any) => {
         deleted : 'You request was successfully deleted',
         declined : 'You request was successfully declined',
         general_error : 'An error occured, try again later',
+        subscribed : 'Please subscribe to either of the plans to continue',
+        agent_login : 'An agent is not allowed here. Please navigate to the agent portal to continue',
+        banned : 'Your account has either been banned or suspended from using this platform. Please contact support for futher clarification',
     }
     return messages.registered;
 }

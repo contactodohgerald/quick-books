@@ -1,13 +1,13 @@
 import {Request, Response} from 'express';
 import Validator from 'validatorjs';
 
-import { SubscriptionModel } from '../../models/Subscription/SubscriptionModel';
-import {Plan} from "../../models/Plans/PlansModel";
+import Subscription from '../../models/Subscription/SubscriptionModel';
+import Plan from "../../models/Plans/PlansModel";
 import Users from "../../models/UsersModel";
 import { makePaymentRequest, flw } from "../../../library/Flutterwave";
-import { returnMessage } from "../../../Traits/SystemMessage";
-import { ReturnRequest } from "../../../Traits/Request";
-import { createUniqueId } from '../../../Traits/Generics';
+import { returnMessage } from "../../../traits/SystemMessage";
+import { ReturnRequest } from "../../../traits/Request";
+import { createUniqueId } from '../../../traits/Generics';
 import { Logging } from '../../../library/Logging';
 
 
@@ -37,7 +37,7 @@ class SubscriptioController {
                 const data = {
                     uniqueId:createUniqueId(), userId, planId, amount: plan.price, paymentMethod, status: 'pending'   
                 }
-                const subscription = new SubscriptionModel(data);
+                const subscription = new Subscription(data);
                 try {
                     await subscription.save();
                     let paymentUrl = await makePaymentRequest(
@@ -67,13 +67,13 @@ class SubscriptioController {
 
         const { status, tx_ref, transaction_id } = body;
         if (status === 'successful') {
-            const subscription = await SubscriptionModel.findOne({ uniqueId: tx_ref});
+            const subscription = await Subscription.findOne({ uniqueId: tx_ref});
             if(subscription){
                 const response = await flw.Transaction.verify({id: transaction_id});
                 Logging.info(response);
                 if(response){
                     if(response.data.status === "successful" && response.data.amount === subscription.amount && response.data.currency === "NGN"){
-                        SubscriptionModel.findOneAndUpdate({uniqueId: subscription.uniqueId}, {status: 'success'}, (err: any) => {
+                        Subscription.findOneAndUpdate({uniqueId: subscription.uniqueId}, {status: 'success'}, (err: any) => {
                             if(err){
                                 ReturnRequest(res, 500, err, {});
                             }
@@ -96,7 +96,7 @@ class SubscriptioController {
 
     async fetchAllSubcriptions(req: Request, res: Response){
         try {
-            const subscriptions = await SubscriptionModel.find({ deletedAt: null});
+            const subscriptions = await Subscription.find({ deletedAt: null});
             if(subscriptions.length == 0)
                 ReturnRequest(res, 404, returnMessage("returned_error"), {});
 

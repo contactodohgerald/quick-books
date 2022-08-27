@@ -2,9 +2,9 @@ import { Request, Response } from 'express'
 import { Logging } from "../../../library/Logging";
 import Verification from "../../models/Verifications/VerificationModel";
 import User from "../../models/UsersModel";
-import { createUniqueId, createConfimationCode } from "../../../Traits/Generics";
-import { ReturnRequest } from '../../../Traits/Request';
-import { returnMessage } from '../../../Traits/SystemMessage';
+import { createUniqueId, createConfimationCode } from "../../../traits/Generics";
+import { ReturnRequest } from '../../../traits/Request';
+import { returnMessage } from '../../../traits/SystemMessage';
 import { sendText } from '../../../config/text';
 
 class VerificationController {

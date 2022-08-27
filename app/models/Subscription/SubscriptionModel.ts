@@ -12,7 +12,7 @@ export interface ISubscription {
 
 export interface ISubscriptionModel extends ISubscription, Document { }
 
-export const SubscriptionSchema = new Schema(
+const SubscriptionSchema = new Schema(
     {
         uniqueId: { type: String, required: true },
         userId: { type: String, required: true, ref: 'Users' },
@@ -26,4 +26,4 @@ export const SubscriptionSchema = new Schema(
     }
 );
 
-export const SubscriptionModel = mongoose.model<ISubscriptionModel>("Subscription", SubscriptionSchema);
+export default mongoose.model<ISubscriptionModel>('Subscription', SubscriptionSchema);

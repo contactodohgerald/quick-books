@@ -5,5 +5,5 @@
     "strict": true,                                      /* Enable all strict type-checking options. */
     "skipLibCheck": true                                 /* Skip type checking all .d.ts files. */
   },
-  "include": ["app/**/*", "routes", "Traits/SystemMessage.ts", "Traits/Request.ts", "Traits/Generics.ts"],                            /* Specify files to include in compilation. */
+  "include": ["app/**/*", "routes", "traits/SystemMessage.ts", "traits/Request.ts", "traits/Generics.ts"],                            /* Specify files to include in compilation. */
 }

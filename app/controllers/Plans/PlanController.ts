@@ -1,11 +1,11 @@
 import {Request, Response} from 'express';
 
-import { Plan } from '../../models/Plans/PlansModel';
-import { ReturnRequest } from '../../../Traits/Request';
+import  Plan  from '../../models/Plans/PlansModel';
+import { ReturnRequest } from '../../../traits/Request';
 import Validator from 'validatorjs';
-import { createUniqueId } from '../../../Traits/Generics';
+import { createUniqueId } from '../../../traits/Generics';
 import { uploadImage } from '../../../library/cloudinary';
-import { returnMessage } from '../../../Traits/SystemMessage';
+import { returnMessage } from '../../../traits/SystemMessage';
 
 
 class PlanController {

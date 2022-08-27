@@ -1,6 +1,7 @@
 import express from 'express';
 import http from 'http';
 import mongoose from 'mongoose';
+import passport from 'passport';
 import { config } from '../database/connection';
 import { Logging } from '../library/logging';
 
@@ -35,6 +36,8 @@ const startServer = () => {
 
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
+
+    app.use(passport.initialize());
 
     //rules of the api
     app.use((req, res, next) => {

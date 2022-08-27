@@ -21,7 +21,6 @@ const VerificationSchema: Schema = new Schema(
         deletedAt: { type: Date, default: null },
     },
     {
-        versionKey: false,
         timestamps: true,
     }
 );
