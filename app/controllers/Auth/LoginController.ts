@@ -10,6 +10,7 @@ import { returnMessage } from '../../../traits/SystemMessage';
 import Users from '../../models/UsersModel';
 import VerificationController from './VerificationController';
 import { sendText } from '../../../config/text';
+import Mailer from '../../services/MailService';
 
 dotevn.config();
 
@@ -61,6 +62,16 @@ class LoginController {
             }
             const secretOrPrivateKey = process.env.JWT_SECRET || '';
             const token = jwt.sign(payload, secretOrPrivateKey, { expiresIn: '3d' });
+
+            if(user.notification === 'email'){
+                const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+                const mailer = Mailer;
+                mailer.subject( date +" Login Notification")
+                    .text("There was a successful login to your "+process.env.APP_NAME+" Account")
+                    .text("On the "+date)
+                    .text("If you did not login to your "+process.env.APP_NAME+" account, kindly contact (our 24/7 Live Support) or send an email to "+process.env.APP_EMAIL)
+                    .send(user.email);
+            }
 
             ReturnRequest(res, 200, returnMessage("login"), {
                 token: "Bearer " + token

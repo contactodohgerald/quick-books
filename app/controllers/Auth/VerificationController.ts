@@ -7,7 +7,14 @@ import { ReturnRequest } from '../../../traits/Request';
 import { returnMessage } from '../../../traits/SystemMessage';
 import { sendText } from '../../../config/text';
 
-class VerificationController {
+import { Controller } from '../Controller';
+
+class VerificationController extends Controller {
+
+    constructor () {
+        super()
+    }
+
     createVerificationCode = async (userId: string, type: string = 'account-activation' ): Promise<any> => {
         const verificationCode = createConfimationCode();
         const getVerification = await Verification.findOne({userId, status: 'pending', type});
@@ -49,6 +56,7 @@ class VerificationController {
                         //send verification code to user by email
                     }
                 }
+                
                 ReturnRequest(res, 200, returnMessage("account_verified"), {
                     user,
                     verification

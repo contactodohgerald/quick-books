@@ -12,9 +12,9 @@ class UserController {
         try {
             const usertype = req.params.type;
             const users = await Users.find({ deletedAt: null, userType: usertype });
-            if(users.length === 0){
+            if(users.length === 0)
                 ReturnRequest(res, 400, returnMessage("returned_error"), {});
-            }
+            
             ReturnRequest(res, 200, returnMessage("returned_success"), users);
         } catch (error: any) {
             ReturnRequest(res, 500, error.message, {});

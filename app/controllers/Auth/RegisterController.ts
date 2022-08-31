@@ -8,6 +8,7 @@ import { returnMessage } from "../../../traits/SystemMessage";
 import { ReturnRequest } from "../../../traits/Request";
 import VerificationController from "./VerificationController";
 import { sendText } from '../../../config/text';
+import Mailer from "../../services/MailService";
 
 class RegisterController {
 
@@ -35,12 +36,17 @@ class RegisterController {
             await user.save();
              //generate verification code
             const verificationCode = await VerificationController.createVerificationCode(user.uniqueId);
-            const message = "Your verification code is " + verificationCode + ". Please enter this code to verify your account.";
             if(user.notification === 'text') {
                 //send verification code to user by text
-                sendText(newPhone, message);
+                sendText(newPhone, "Your verification code is " + verificationCode + ". Please enter this code to verify your account.");
             }else{
                 //send verification code to user by email
+                const mailer = Mailer;
+                mailer.subject("Account Verification")
+                    .text("Your verification code is ")
+                    .code(verificationCode)
+                    .text("Please enter this code to verify your account.")
+                    .send(user.email);
             }
             ReturnRequest(res, 200, returnMessage("registered"), user)
         } catch (err: any) {

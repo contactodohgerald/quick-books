@@ -4,39 +4,35 @@ import path from 'path';
 import nodemailer from 'nodemailer';
 
 import { Logging } from '../library/Logging'
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
 
-dotevn.config();
+dotevn.config()
 
-const MAIL_USER = process.env.MAIL_USER || '';
-const MAIL_PASS = process.env.MAIL_PASS || '';
-const MAIL_PORT = process.env.MAIL_PORT || '';
-const MAIL_HOST = process.env.MAIL_HOST || '';
+const env = process.env;
 
 const Mail = nodemailer.createTransport({
-    host: MAIL_HOST,
-    port: MAIL_PORT,
+    host: env.MAIL_HOST || '',
+    port: env.MAIL_PORT || 0,
     secure: false,
     auth: {
-      user: MAIL_USER,
-      pass: MAIL_PASS,
+      user: env.MAIL_USER || '',
+      pass: env.MAIL_PASS || '',
     }
-});
+} as SMTPTransport.Options);
 
-const message = {
-    from: 'sender@gmail.com',
-    to: "receiver@gmail.com",
-    subject: "Mail Subject",
-    html: await ejs.renderFile(path.resolve('../views/emails/template.ejs'), {
-        data: {
-            code: "5456"
-        }
-    }, {
-        async: true
-    })
-}
+// const sendMailNotification = async (to: string, subject: string, data: any) => {
+//     Logging.warn(data)
+//     const message ={
+//         from: env.APP_EMAIL,
+//         to,
+//         subject,
+//         html: await ejs.render(path.resolve('views/emails/template.ejs'), {data }, { async: true })
+//     }
 
-Mail.sendMail(message, (err: any, info: any) => {
-    if(err) throw new Logging.error(err)
-})
+//     Mail.sendMail(message, (err: any, info: any) => {
+//         if(err) Logging.error(err)
+//         Logging.info(info)
+//     })
+// }
 
 export default Mail

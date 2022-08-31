@@ -81,6 +81,53 @@ class ProductController {
             ReturnRequest(res, 500, err, {})
         }
     }
+
+    async updateProduct(req: Request, res: Response) {
+        const body: Record<string, any> = req.body;
+        const productID = req.params.productID;
+        try {
+            let validation = new Validator(body, {
+                title: "required",
+                unit_price: "required",
+                quantity: "required",
+            })
+            if (validation.fails())
+                ReturnRequest(res, 400, validation.errors, {});
+ 
+            const {title, unit_price, quantity, thumbnail, description} = body;
+            const _thumbnail = await uploadImage(thumbnail);
+            Product.findOneAndUpdate({uniqueId:productID}, {
+                title: title,
+                unit_price: unit_price,
+                qty: quantity,
+                thumbnail: _thumbnail,
+                desc: description,
+            }, (err: any, prod: any) => {
+                if(err)
+                    ReturnRequest(res, 404, err, {});
+                
+                ReturnRequest(res, 404, returnMessage("updated"), prod);
+            });
+        } catch (error: any) {
+            ReturnRequest(res, 500, error, {});
+        }
+    }
+
+    async deleteProduct(req: Request, res: Response) {
+        const productID = req.params.productID;
+        try {
+            Product.findOneAndDelete({uniqueId: productID}, (err: any, prod: any) => {
+                if(err)
+                    ReturnRequest(res, 404, err, {});
+
+                ReturnRequest(res, 200, returnMessage("deleted"), prod);    
+            })
+        } catch (err: any) {
+            ReturnRequest(res, 404, err, {});
+        }
+    }
+
+
 }
 
 export default new ProductController
