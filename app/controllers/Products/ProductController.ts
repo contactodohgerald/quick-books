@@ -20,7 +20,7 @@ class ProductController {
         let validation = new Validator(body, {
             title: "required",
             unit_price: "required",
-            quantity: "required",
+            quantity: "required|numeric",
         })
         if (validation.fails())
             ReturnRequest(res, 400, validation.errors, {})

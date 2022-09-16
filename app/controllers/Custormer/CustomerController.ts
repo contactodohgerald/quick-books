@@ -37,6 +37,17 @@ class CustomerController {
         }
     }
 
+    async fetchAllCustormer(req: Request, res: Response) {
+        try {
+            const custormer = await Customer.find({ deletedAt: null });
+            if(custormer.length === 0)
+                ReturnRequest(res, 404, returnMessage("returned_error"), {});
+            
+            ReturnRequest(res, 201, returnMessage("returned_success"), custormer);
+        } catch (error: any) {
+            ReturnRequest(res, 500, error.message, {});
+        }
+    }
 
 }
 

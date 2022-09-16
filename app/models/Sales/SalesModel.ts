@@ -3,10 +3,13 @@ import mongoose, { Document, Schema } from 'mongoose'
 export interface ISales {
     uniqueId: string;
     agentID: string;
-    productID: string;
-    qty: number;
+    custormerID: string;
+    product: Object;
     desc: string;
-    availabilty: boolean;
+    status: string;
+    payment_method: string;
+    payment_mode: string; 
+    discount: Number;
     deletedAt: Date;
 }
 
@@ -15,15 +18,20 @@ export interface ISaleModel extends Document, ISales { }
 const SaleSchema = new Schema (
     {
         uniqueId: { type: String, required: true, unique: true },
-        userID: { type: String, required: true, ref: 'Users' },
-        title: { type: String, required: true },
-        unit_price: { type: Number, required: true },
-        qty: { type: Number, required: true },
-        thumbnail: { type: String },
+        agentID: { type: String, required: true, ref: 'Agent' },
+        custormerID: { type: String, required: true, ref: 'Customer' },
+        product: [
+            {
+                productID : {type: String, required:true},
+                qty: {type: Number, required: true}
+            },
+        ],
         desc: { type: String },
-        availabilty: { type: Boolean, default: true },
+        status: { type: String, default: 'pending' },
+        payment_method: { type: String, required: true },
+        payment_mode: { type: String, required: true },
+        discount: { type: Number, default: 0 },
         deletedAt: Date
-      
     },
     {
         timestamps: true

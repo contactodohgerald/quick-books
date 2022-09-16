@@ -6,6 +6,7 @@ import SubscriptionRoute from '../routes/SubscriptionRoute';
 import ProductRoute from '../routes/ProductRoute';
 import AgentRoute from '../routes/AgentRoute';
 import CustomerRouter from '../routes/CustomerRoute';
+import SalesRouter from '../routes/SaleRoute';
 
 require('../config/passport');
 
@@ -18,6 +19,7 @@ const CombineRouter = (app: any) => {
     app.use('/api/v1/products/', ProductRoute)
     app.use('/api/v1/agents', AgentRoute)
     app.use('/api/v1/custormers', CustomerRouter)
+    app.use('/api/v1/sales', SalesRouter)
 }
 
 export default CombineRouter;

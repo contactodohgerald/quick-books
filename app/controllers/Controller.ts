@@ -11,8 +11,4 @@ export class Controller {
 
     }
 
-    ReturnRequest() {
-        return ReturnRequest;
-    }
-
 }
