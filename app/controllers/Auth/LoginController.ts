@@ -38,7 +38,7 @@ class LoginController {
             //second check: if not verified, send verification code to user
             if(!user.verified){
                 //generate verification code
-                const verificationCode = await VerificationController.createVerificationCode(user.uniqueId);
+                const verificationCode = await VerificationController.createVerificationCode(user._id);
                 const message = "Your verification code is " + verificationCode + ". Please enter this code to verify your account.";
                 if(user.notification === 'text') {
                     //send verification code to user by text
@@ -57,9 +57,7 @@ class LoginController {
                 ReturnRequest(res, 404, returnMessage("banned"), {});
             }
 
-            const payload = {
-                userID: user.uniqueId, userName: user.username, userEmail: user.email
-            }
+            const payload = {userID: user._id, userName: user.username, userEmail: user.email}
             const secretOrPrivateKey = process.env.JWT_SECRET || '';
             const token = jwt.sign(payload, secretOrPrivateKey, { expiresIn: '3d' });
 

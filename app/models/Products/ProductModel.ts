@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface IProduct {
-    uniqueId: string;
     userID: string;
     title: string;
     unit_price: number;
@@ -16,7 +15,6 @@ export interface IProductModel extends Document, IProduct { }
 
 const ProductSchema = new Schema (
     {
-        uniqueId: { type: String, required: true, unique: true },
         userID: { type: String, required: true, ref: 'Users' },
         title: { type: String, required: true },
         unit_price: { type: Number, required: true },

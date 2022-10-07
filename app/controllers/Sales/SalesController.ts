@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import Validator from 'validatorjs';
-import { createUniqueId } from '../../../traits/Generics';
 import { ReturnRequest } from '../../../traits/Request';
 import { returnMessage } from '../../../traits/SystemMessage';
 import Product from '../../models/Products/ProductModel';
@@ -21,13 +20,11 @@ class SalesController {
             ReturnRequest(res, 404, validation.errors, {});
 
         const { agentID, custormerID, payment_method, payment_mode, desc, product, discount } = body;
-        const sales = new Sales(
-            {uniqueId: createUniqueId(), agentID, custormerID, product, payment_method, payment_mode, desc, discount }
-        )
+        const sales = new Sales({agentID, custormerID, product, payment_method, payment_mode, desc, discount })
         try {
             //work on the product
             product.forEach(async (rst: any) => {
-                const products = await Product.findOne({ uniqueId: rst.productID });
+                const products = await Product.findOne({ _id: rst.productID });
                 if(products){
                     const err = 'the quantity of '+products.title+' is below the quantity inputed' ;
                     if(rst.qty > products.qty)
@@ -64,7 +61,7 @@ class SalesController {
     async fetchSingleSale(req: Request, res: Response) {
         try {
             const salesID = req.params.salesID;
-            const sales = await Sales.findOne({ uniqueId: salesID });
+            const sales = await Sales.findOne({ _id: salesID });
             if(sales){
                 ReturnRequest(res, 201, returnMessage("returned_success"), sales);
             }else{

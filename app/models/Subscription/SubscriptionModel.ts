@@ -1,7 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface ISubscription {
-    uniqueId: string;
     userId: string;
     planId: string;
     paymentMethod: string;
@@ -14,12 +13,11 @@ export interface ISubscriptionModel extends ISubscription, Document { }
 
 const SubscriptionSchema = new Schema(
     {
-        uniqueId: { type: String, required: true },
-        userId: { type: String, required: true, ref: 'Users' },
-        planId: { type: String, required: true, ref: 'Plans' },
+        userId: { type: String, required: true, ref: 'User' },
+        planId: { type: mongoose.SchemaTypes.ObjectId, required: true, ref: 'Plan' },
         amount: { type: Number, required: true },
-        paymentMethod: { type: String, required: true },
-        status: { type: String, required: true },
+        paymentMethod: { type: String },
+        status: { type: String, required: true, default: 'pending' },
         deletedAt: { type: Date, default: null }
     },{
         timestamps: true

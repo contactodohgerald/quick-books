@@ -31,5 +31,5 @@ export const addCountryCode = (phone: string, countryCode: string): string => {
 
     (countryCode.charAt(0) === '+') ? newCountryCode = countryCode.substring(1) : newCountryCode = countryCode;
 
-    return newCountryCode + newPhone;
+    return '+'+newCountryCode + newPhone;
 }

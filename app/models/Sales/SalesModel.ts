@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose'
 
 export interface ISales {
-    uniqueId: string;
     agentID: string;
     custormerID: string;
     product: Object;
@@ -17,7 +16,6 @@ export interface ISaleModel extends Document, ISales { }
 
 const SaleSchema = new Schema (
     {
-        uniqueId: { type: String, required: true, unique: true },
         agentID: { type: String, required: true, ref: 'Agent' },
         custormerID: { type: String, required: true, ref: 'Customer' },
         product: [

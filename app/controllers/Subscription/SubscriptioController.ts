@@ -7,9 +7,6 @@ import Users from "../../models/UsersModel";
 import { makePaymentRequest, flw } from "../../../library/Flutterwave";
 import { returnMessage } from "../../../traits/SystemMessage";
 import { ReturnRequest } from "../../../traits/Request";
-import { createUniqueId } from '../../../traits/Generics';
-import { Logging } from '../../../library/Logging';
-
 
 class SubscriptioController {
 
@@ -26,29 +23,26 @@ class SubscriptioController {
         
         const {planId, userId, paymentMethod } = body;
         //get the plans
-        const plan = await Plan.findOne({ uniqueId: planId });
+        const plan = await Plan.findOne({ _id: planId });
         if(!plan){       
             ReturnRequest(res, 400, "Plan does not exit", {});
         }else{
-            const user = await Users.findOne({ uniqueId: userId });
+            const user = await Users.findOne({ _id: userId });
             if(!user){
                 ReturnRequest(res, 400, "User does not exit", {});
             }else{
-                const data = {
-                    uniqueId:createUniqueId(), userId, planId, amount: plan.price, paymentMethod, status: 'pending'   
-                }
+                const data = {userId, planId, amount: plan.price, paymentMethod, status: 'pending'}
                 const subscription = new Subscription(data);
                 try {
                     await subscription.save();
                     let paymentUrl = await makePaymentRequest(
-                        subscription.uniqueId, plan.price, "http://127.0.0.1:9090/api/v1/subscriptions/verify", user.email, user.phone, user.name, subscription.uniqueId, user.uniqueId
+                        subscription._id, plan.price, "http://127.0.0.1:9090/api/v1/subscriptions/verify", user.email, user.phone, user.name, subscription._id, user._id
                     )
                     const url = {
                         url: paymentUrl
                     }
                     ReturnRequest(res, 200, "Proceed to Url", url);
                 } catch (error: any) {
-                    Logging.error(error.message);
                     ReturnRequest(res, 500, error.message, {})
                 }
             }
@@ -67,17 +61,16 @@ class SubscriptioController {
 
         const { status, tx_ref, transaction_id } = body;
         if (status === 'successful') {
-            const subscription = await Subscription.findOne({ uniqueId: tx_ref});
+            const subscription = await Subscription.findOne({ _id: tx_ref});
             if(subscription){
                 const response = await flw.Transaction.verify({id: transaction_id});
-                Logging.info(response);
                 if(response){
                     if(response.data.status === "successful" && response.data.amount === subscription.amount && response.data.currency === "NGN"){
-                        Subscription.findOneAndUpdate({uniqueId: subscription.uniqueId}, {status: 'success'}, (err: any) => {
+                        Subscription.findOneAndUpdate({_id: subscription._id}, {status: 'success'}, (err: any) => {
                             if(err){
                                 ReturnRequest(res, 500, err, {});
                             }
-                            Users.findOneAndUpdate({uniqueId: response.data.meta.user_id}, { subscriptionStatus: 'subscribed' }, (err: any) => {
+                            Users.findOneAndUpdate({_id: response.data.meta.user_id}, { subscriptionStatus: 'subscribed' }, (err: any) => {
                                 if(err){
                                     ReturnRequest(res, 500, err, {});
                                 }
@@ -103,6 +96,23 @@ class SubscriptioController {
             ReturnRequest(res, 201, returnMessage("returned_success"), subscriptions)    
         } catch (error: any) {
             ReturnRequest(res, 500, error, {})
+        }
+    }
+
+    async fetchSingleSubcription(req: Request, res: Response) {
+        try {
+            const userID = req.params.userID;
+            const subcription = await Subscription.findOne({ userId: userID }).populate({
+                path: 'planId',
+                select: 'title',
+            });
+            if(subcription){
+                ReturnRequest(res, 201, returnMessage("returned_success"), subcription);
+            }else{
+                ReturnRequest(res, 404, returnMessage("returned_error"), {});
+            }
+        } catch (error: any) {
+            ReturnRequest(res, 500, error.message, {});
         }
     }
 }

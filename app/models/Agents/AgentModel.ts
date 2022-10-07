@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IAgent {
-    uniqueId: string;
     name: string;
     email: string;
     phone: string;
@@ -16,7 +15,6 @@ export interface IAgentModel extends IAgent, Document {}
 
 const AgentSchema: Schema = new Schema(
     {
-        uniqueId: { type: String, required: true, unique: true },
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         phone: { type:String, required: false },

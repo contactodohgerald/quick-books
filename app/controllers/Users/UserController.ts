@@ -33,10 +33,10 @@ class UserController {
 
         const { current_password, password } = body;
         const hashPassword = bcrypt.hashSync(password, 12)
-        const user = await Users.findOne({uniqueId: userID});
+        const user = await Users.findOne({_id: userID});
         if(user){
             if(bcrypt.compareSync(current_password, user.password)){
-                Users.findOneAndUpdate({uniqueId: userID}, {password: hashPassword}, (err: any) => {
+                Users.findOneAndUpdate({_id: userID}, {password: hashPassword}, (err: any) => {
                     if(err)
                         ReturnRequest(res, 500, err, {});
         

@@ -1,7 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface ICustormer {
-    uniqueId: string;
     agentID: string,
     name: string,
     email: string,
@@ -17,7 +16,6 @@ export interface ICustomerModel extends Document, ICustormer { }
 
 const CustormerSchema: Schema = new Schema(
     {
-        uniqueId: { type: String, required: true, unique: true },
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         phone: { type:String, required: false },

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import Validator from 'validatorjs'
 import { uploadImage } from '../../../library/cloudinary';
-import { createUniqueId } from '../../../traits/Generics';
 import { ReturnRequest } from '../../../traits/Request';
 import { returnMessage } from '../../../traits/SystemMessage';
 
@@ -28,8 +27,7 @@ class ProductController {
         const {title, unit_price, quantity, thumbnail, description} = body;
         const _thumbnail = await uploadImage(thumbnail);
         const products = new Product({
-            uniqueId: createUniqueId(),
-            userID: req.user.uniqueId,
+            userID: req.user._id,
             title: title,
             unit_price: unit_price,
             qty: quantity,
@@ -58,7 +56,7 @@ class ProductController {
 
     async fetchProductsByUser(req: Request, res: Response) {
         try {
-            const prodcuts = await Product.find({ userID: req.user.uniqueId, deletedAt: null });
+            const prodcuts = await Product.find({ userID: req.user._id, deletedAt: null });
             if(prodcuts.length === 0){
                 ReturnRequest(res, 400, returnMessage("returned_error"), {});
             }
@@ -71,7 +69,7 @@ class ProductController {
     async fetchSingleProduct(req: Request, res: Response) {
         const productID = req.params.productID;
         try {
-            const product = await Product.findOne({ uniqueId: productID });
+            const product = await Product.findOne({ _id: productID });
             if(product){
                 ReturnRequest(res, 200, returnMessage("returned_success"), product);   
             }else{
@@ -96,7 +94,7 @@ class ProductController {
  
             const {title, unit_price, quantity, thumbnail, description} = body;
             const _thumbnail = await uploadImage(thumbnail);
-            Product.findOneAndUpdate({uniqueId:productID}, {
+            Product.findOneAndUpdate({_id: productID}, {
                 title: title,
                 unit_price: unit_price,
                 qty: quantity,
@@ -116,7 +114,7 @@ class ProductController {
     async deleteProduct(req: Request, res: Response) {
         const productID = req.params.productID;
         try {
-            Product.findOneAndDelete({uniqueId: productID}, (err: any, prod: any) => {
+            Product.findOneAndDelete({_id: productID}, (err: any, prod: any) => {
                 if(err)
                     ReturnRequest(res, 404, err, {});
 

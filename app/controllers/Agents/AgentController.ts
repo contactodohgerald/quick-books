@@ -2,7 +2,6 @@ import dotevn from 'dotenv';
 import { Request, Response } from 'express'
 import Validator from 'validatorjs';
 import {hashSync, compareSync} from 'bcryptjs'
-import { createUniqueId } from '../../../traits/Generics';
 import { ReturnRequest } from '../../../traits/Request';
 import jwt from 'jsonwebtoken';
 
@@ -28,9 +27,7 @@ class AgentController {
         const user = await User.findOne({uniqueId: userID.uniqueId});
         if(user){
             const hash_pass = hashSync(password, 12);
-            const agent = new Agent(
-                {uniqueId: createUniqueId(), name, email, password: hash_pass, userID}
-            );
+            const agent = new Agent({name, email, password: hash_pass, userID});
             try {
                 await agent.save();
                 ReturnRequest(res, 200, returnMessage("created"), agent);
@@ -64,7 +61,7 @@ class AgentController {
                 ReturnRequest(res, 404, returnMessage("banned"), {});
             
             const payload = {
-                userID: agent.uniqueId, userEmail: agent.email
+                userID: agent._id, userEmail: agent.email
             }
             const secretOrPrivateKey = process.env.JWT_SECRET || '';
             const token = jwt.sign(payload, secretOrPrivateKey, { expiresIn: '3d' });
@@ -79,7 +76,6 @@ class AgentController {
 
     async fetchAllAgents(req: Request, res: Response) {
         try {
-            const user = req.user;
             const agents = await Agent.find({ deletedAt: null });
             if(agents.length === 0)
                 ReturnRequest(res, 404, returnMessage("returned_error"), {});

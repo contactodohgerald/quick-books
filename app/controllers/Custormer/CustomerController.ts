@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Validator from "validatorjs";
-import { createUniqueId } from "../../../traits/Generics";
 import { ReturnRequest } from "../../../traits/Request";
 import { returnMessage } from "../../../traits/SystemMessage";
 
@@ -21,11 +20,9 @@ class CustomerController {
             ReturnRequest(res, 500, validation.errors, {});
 
         const {agentID, name, email, phone, address, state, country} = body;
-        const agent = await Agent.findOne({uniqueId: agentID});
+        const agent = await Agent.findOne({_id: agentID});
         if(agent){
-            const custormer = new Customer(
-                {uniqueId: createUniqueId(), agentID, name, email, phone, address, state, country }
-            )
+            const custormer = new Customer({agentID, name, email, phone, address, state, country })
             try {
                 await custormer.save();
                 ReturnRequest(res, 201, returnMessage("created"), custormer);
