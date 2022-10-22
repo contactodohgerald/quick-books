@@ -10,25 +10,20 @@ const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY || '';
 const FLW_URL = process.env.FLW_URL || '';
 const APP_NAME = process.env.APP_NAME || '';
 
+const VERIFY_PAYMENT = process.env.VERIFY_PAYMENT || '';
+
 export const flw = new Flutterwave(FLW_PUBLIC_KEY, FLW_SECRET_KEY);
 
 
 // Initiating the transaction
-export const makePaymentRequest = async (tx_ref: string, amount: number, url: string, email: string, phone: string, name: string, subscription_id: string, user_id: string) => {
+export const makePaymentRequest = async (tx_ref: string, amount: number, email: string, phone: string, user_id: string) => {
     const data = {
         tx_ref,
         amount,
-        currency: "NGN",
-        redirect_url: url,
-        meta: {
-            subscription_id,
-            user_id
-        },
-        customer: {
-            email,
-            phonenumber: phone,
-            name
-        },
+        currency: "USD",
+        redirect_url: VERIFY_PAYMENT,
+        meta: {tx_ref, user_id},
+        customer: {email, phonenumber: phone},
         customizations: {
             title: APP_NAME,
             logo: "http://www.piedpiper.com/app/themes/joystick-v27/images/logo.png"

@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import Verification from "../../models/Verifications/VerificationModel";
 import User from "../../models/UsersModel";
-import { createUniqueId, createConfimationCode } from "../../../traits/Generics";
 import { ReturnRequest } from '../../../traits/Request';
 import { returnMessage } from '../../../traits/SystemMessage';
 import { sendText } from '../../../config/text';
+
+import { createConfimationCode } from '../../../traits/Generics';
 
 import { Controller } from '../Controller';
 import Mailer from '../../services/MailService';
@@ -31,7 +32,7 @@ class VerificationController extends Controller {
         }
     }
     
-    VerifyCode = async (req: Request, res: Response) => {
+    verifyCode = async (req: Request, res: Response) => {
         try {
             const body : Record<string, any> = req.body;
             const { userId, code } = body;
@@ -63,6 +64,33 @@ class VerificationController extends Controller {
             }
         } catch (err: any) {
             ReturnRequest(res, 500, err.message, {})
+        }
+    }
+
+    resendVerificationCode = async (req: Request, res: Response) => {
+        try {
+            const userId = req.params.userId;
+            const user = await User.findOne({ _id: userId})
+            if(!user){
+                ReturnRequest(res, 400, returnMessage("returned_error"), {});
+            }else{
+                const verification = await this.createVerificationCode(user._id);
+                if(user.notification === 'text') {
+                    //send verification code to user by text
+                    sendText(user.phone, "Your verification code is " + verification + ". Please enter this code to verify your account.");
+                }else{
+                    //send verification code to user by email
+                    const mailer = Mailer;
+                    mailer.subject("Account Verification")
+                        .text("Your verification code is ")
+                        .code(verification)
+                        .text("Please enter this code to verify your account.")
+                        .send(user.email);
+                }
+                ReturnRequest(res, 200, returnMessage("code_sent"), user)
+            }
+        }catch (err: any) {
+            ReturnRequest(res, 500, err, {})
         }
     }
 }

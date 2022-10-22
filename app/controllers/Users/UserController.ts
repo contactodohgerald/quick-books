@@ -49,6 +49,29 @@ class UserController {
             ReturnRequest(res, 404, returnMessage("general_error"), {});
         }
     }
+
+    async fetchProfile(req: Request, res: Response) {
+        try{
+            const userID = req.params.userID;
+            const type = req.params.type;
+            let users;
+            if(type == 'user'){
+                users = await Users.findOne({_id: userID}); 
+            }else if(type == 'agent'){
+                users = await Users.findOne({_id: userID}); 
+            }else{
+                users = await Users.findOne({_id: userID}); 
+            }
+
+            if(users){
+                ReturnRequest(res, 200, returnMessage("returned_success"), users);
+            }else{
+                ReturnRequest(res, 400, returnMessage("returned_error"), {});
+            }
+        } catch (error: any) {
+            ReturnRequest(res, 500, error.message, {});
+        }
+    }
 }
 
 export default new UserController

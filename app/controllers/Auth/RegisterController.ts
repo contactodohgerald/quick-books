@@ -30,20 +30,19 @@ class RegisterController {
         const { planID, name, email, phone, password } = body;
         const hashPassword = hashSync(password, 12)
         // add country code to phone    
-        //const newPhone = addCountryCode(phone, countryCode); 
         const newUsername = generateUsername(email); 
         const user: any = new Users({name, email, username: newUsername, phone, password: hashPassword });
         try {
-            const plan = await Plan.findOne({ uniqueId: planID });
+            const plan = await Plan.findOne({ _id: planID });
             if(!plan){
                 ReturnRequest(res, 400, "Plan does not exit", {});
             }else{
                 await user.save();
                 //add subscription plan to user's table
-                const subscription = new Subscription({userId: user.uniqueId, planId: plan._id, amount: plan.price})
+                const subscription = new Subscription({userId: user._id, planId: plan._id, amount: plan.price})
                 await subscription.save();
                 //generate verification code
-                const verificationCode = await VerificationController.createVerificationCode(user.uniqueId);
+                const verificationCode = await VerificationController.createVerificationCode(user._id);
                 if(user.notification === 'text') {
                     //send verification code to user by text
                     sendText(phone, "Your verification code is " + verificationCode + ". Please enter this code to verify your account.");

@@ -17,7 +17,7 @@ const PlanSchema = new Schema(
         price: { type: Number, required: true },
         totalAgents: { type: Number, required: true },
         totalProducts: { type: Number, required: true },
-        duration: { type: Number, default: 30 },
+        duration: { type: Number, required: true },
         deletedAt: Date
     },{
         timestamps: true 

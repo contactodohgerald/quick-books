@@ -10,7 +10,7 @@ export interface INotificationModel extends INotification, Document { }
 
 const NotificationSchema = new Schema(
     {
-        userId: { type: String, required: true, ref: 'Users' },
+        userId: { type: String, required: true, ref: 'User' },
         deletedAt: { type: Date, default: null }
     },{
         timestamps: true

@@ -3,7 +3,6 @@ import {Request, Response} from 'express';
 import  Plan  from '../../models/Plans/PlansModel';
 import { ReturnRequest } from '../../../traits/Request';
 import Validator from 'validatorjs';
-import { uploadImage } from '../../../library/cloudinary';
 import { returnMessage } from '../../../traits/SystemMessage';
 
 
@@ -27,13 +26,13 @@ class PlanController {
             price: 'required|numeric',
             totalAgents: 'required',
             totalProducts: 'required',
+            duration: 'required',
         });
         if (validation.fails())
             ReturnRequest(res, 400, validation.errors, {})
     
-        const { title, price, totalAgents, totalProducts, thumbnail } = body;  
-        const newThumbnail = await uploadImage(thumbnail);
-        const plan = new Plan({title, price, totalAgents, totalProducts, thumbnail: newThumbnail });
+        const { title, price, totalAgents, totalProducts, duration } = body;
+        const plan = new Plan({title, price, totalAgents, totalProducts, duration });
         try {
             await plan.save();
             ReturnRequest(res, 200, returnMessage("created"), plan);
